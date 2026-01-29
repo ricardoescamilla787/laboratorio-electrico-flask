@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center min-vh-100 align-items-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0"><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label for="tipo_usuario" class="form-label">Tipo de Usuario:</label>
+                        <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
+                            <option value="">Seleccionar tipo...</option>
+                            <option value="administrador">Administrador</option>
+                            <option value="estudiante">Estudiante</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Contraseña:</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sign-in-alt"></i> Ingresar
+                    </button>
+                </form>
+                
+                
+            </div>
+        </div>
+        
+        <!-- informacion del tec -->
+        <div class="text-center mt-4">
+            <p class="text-muted mb-1">
+                <strong>Instituto Tecnológico de Pachuca</strong><br>
+                Departamento de Ingeniería Eléctrica y Electrónica
+            </p>
+            <small class="text-muted">
+                Sistema de Gestión de Préstamos del Laboratorio de Eléctrica
+            </small>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.min-vh-100 {
+    min-height: 100vh;
+}
+</style>
+{% endblock %}

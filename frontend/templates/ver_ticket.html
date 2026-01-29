@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}Ticket #{{ prestamo.id if prestamo else 'N/A' }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('reportes_avanzados') }}">Reportes Avanzados</a></li>
+                <li class="breadcrumb-item active">Ticket #{{ prestamo.id if prestamo else 'N/A' }}</li>
+            </ol>
+        </nav>
+        
+        {% if prestamo %}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fas fa-receipt"></i> Ticket de Préstamo #{{ prestamo.id }}</h2>
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> Imprimir
+            </button>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-dark text-white text-center">
+                <h4 class="mb-0">INSTITUTO TECNOLÓGICO DE PACHUCA</h4>
+                <p class="mb-0">DEPARTAMENTO DE INGENIERÍA ELÉCTRICA Y ELECTRÓNICA</p>
+                <p class="mb-0">LABORATORIO DE ELÉCTRICA</p>
+                <small>COMPROBANTE DE PRÉSTAMO DE MATERIAL</small>
+            </div>
+            <div class="card-body">
+                <!-- Informacion general -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Información General</h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Fecha/Hora:</th>
+                                <td>{{ prestamo.fecha_hora.strftime('%d/%m/%Y %H:%M') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Estado:</th>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if prestamo.estado == 'devuelto' else 'primary' }}">
+                                        {{ prestamo.estado|title }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Solicitante:</th>
+                                <td>{{ prestamo.solicitante }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Información Académica</h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th>Carrera:</th>
+                                <td>{{ prestamo.carrera_nombre }}</td>
+                            </tr>
+                            <tr>
+                                <th>Asignatura:</th>
+                                <td>{{ prestamo.asignatura_nombre }}</td>
+                            </tr>
+                            <tr>
+                                <th>Docente:</th>
+                                <td>{{ prestamo.docente_nombre }}</td>
+                            </tr>
+                            <tr>
+                                <th>Práctica:</th>
+                                <td>#{{ prestamo.practica_numero }} - {{ prestamo.practica_nombre }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Materiales solicitados -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5>Materiales Solicitados</h5>
+                        {% if prestamo.materiales %}
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Material</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for material in prestamo.materiales %}
+                                    <tr>
+                                        <td>{{ material.nombre }}</td>
+                                        <td>{{ material.cantidad }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No hay materiales registrados</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Firmas e integrantes -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h5>Integrantes del Equipo</h5>
+        {% if prestamo.integrantes %}
+        <div class="table-responsive">
+            <table class="table table-sm table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Número de Control</th>
+                        <th>Firma Digital</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for integrante in prestamo.integrantes %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>{{ integrante.nombre }}</td>
+                        <td>{{ integrante.no_control or 'N/A' }}</td>
+                        <td class="text-center">
+                            {% if integrante.firma_data and integrante.firma_data|length > 100 %}
+                            <div class="firma-container">
+                                <img src="{{ integrante.firma_data }}" 
+                                     alt="Firma de {{ integrante.nombre }}" 
+                                     class="firma-img"
+                                     style="max-width: 200px; max-height: 80px; border: 1px solid #ddd; background: white;">
+                                <div class="mt-1">
+                                    <small class="text-muted">Firma digital</small>
+                                </div>
+                            </div>
+                            {% else %}
+                            <span class="badge bg-warning">
+                                <i class="fas fa-exclamation-triangle"></i> Sin firma
+                            </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No hay integrantes registrados para este préstamo.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+                <!-- Observaciones -->
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Observaciones</h5>
+                        <div class="card {{ 'border-danger' if prestamo.importancia_observacion == 'urgente' else 'border-warning' }}">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <strong>Importancia:</strong>
+                                    <span class="badge bg-{{ 'danger' if prestamo.importancia_observacion == 'urgente' else 'warning' }}">
+                                        {{ prestamo.importancia_observacion|title }}
+                                    </span>
+                                </div>
+                                <p class="mb-0">{{ prestamo.observaciones or 'No hay observaciones' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lugar de uso -->
+                {% if prestamo.lugar_uso %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h5>Lugar de Uso</h5>
+                        <p>{{ prestamo.lugar_uso }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <p class="mb-1">_________________________</p>
+                        <small class="text-muted">Recibí</small>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <p class="mb-1">_________________________</p>
+                        <small class="text-muted">Entregó</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4 no-print">
+            <a href="{{ url_for('reportes_avanzados') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a Reportes
+            </a>
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="fas fa-print"></i> Imprimir Ticket
+            </button>
+        </div>
+
+        {% else %}
+        <div class="alert alert-danger text-center">
+            <h4><i class="fas fa-exclamation-triangle"></i> Ticket No Encontrado</h4>
+            <p>El ticket solicitado no existe o no está disponible.</p>
+            <a href="{{ url_for('reportes_avanzados') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Volver a Reportes
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+@media print {
+    .no-print { display: none !important; }
+    .breadcrumb { display: none !important; }
+    .card { border: 1px solid #000 !important; }
+    .btn { display: none !important; }
+    body { font-size: 12px; }
+}
+</style>
+{% endblock %}

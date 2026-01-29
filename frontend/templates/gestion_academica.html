@@ -1,0 +1,308 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión Académica - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-cogs"></i> Gestión Académica</h2>
+        <p class="text-muted">Administra carreras, asignaturas, docentes, prácticas y materiales</p>
+    </div>
+</div>
+
+<!-- Pestañas de gestion -->
+<div class="row mt-4">
+    <div class="col-12">
+        <ul class="nav nav-tabs" id="gestionTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="carreras-tab" data-bs-toggle="tab" data-bs-target="#carreras" type="button">
+                    <i class="fas fa-graduation-cap"></i> Carreras
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="asignaturas-tab" data-bs-toggle="tab" data-bs-target="#asignaturas" type="button">
+                    <i class="fas fa-book"></i> Asignaturas
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="docentes-tab" data-bs-toggle="tab" data-bs-target="#docentes" type="button">
+                    <i class="fas fa-chalkboard-teacher"></i> Docentes
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="practicas-tab" data-bs-toggle="tab" data-bs-target="#practicas" type="button">
+                    <i class="fas fa-flask"></i> Prácticas
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="materiales-tab" data-bs-toggle="tab" data-bs-target="#materiales" type="button">
+                    <i class="fas fa-tools"></i> Materiales
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="gestionTabsContent">
+            <!-- Pestaña Carreras -->
+            <div class="tab-pane fade show active" id="carreras" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Gestión de Carreras</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="formCarrera">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="carreraNombre" class="form-label">Nombre de la Carrera *</label>
+                                        <input type="text" class="form-control" id="carreraNombre" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="carreraAbreviatura" class="form-label">Abreviatura</label>
+                                        <input type="text" class="form-control" id="carreraAbreviatura" maxlength="10">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Agregar Carrera
+                            </button>
+                        </form>
+
+                        <hr>
+                        <h6>Carreras Registradas</h6>
+                        <div id="listaCarreras" class="mt-3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña asignaturas -->
+            <div class="tab-pane fade" id="asignaturas" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Gestión de Asignaturas</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="formAsignatura">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="asignaturaCarrera" class="form-label">Carrera *</label>
+                                        <select class="form-select" id="asignaturaCarrera" required>
+                                            <option value="">Seleccionar carrera...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="asignaturaNombre" class="form-label">Nombre de la Asignatura *</label>
+                                        <input type="text" class="form-control" id="asignaturaNombre" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="asignaturaClave" class="form-label">Clave</label>
+                                        <input type="text" class="form-control" id="asignaturaClave" maxlength="20">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Agregar Asignatura
+                            </button>
+                        </form>
+
+                        <hr>
+                        <h6>Asignaturas Registradas</h6>
+                        <div id="listaAsignaturas" class="mt-3">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña docentes -->
+            <div class="tab-pane fade" id="docentes" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Gestión de Docentes</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="formDocente">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="docenteCarrera" class="form-label">Carrera *</label>
+                                        <select class="form-select" id="docenteCarrera" required>
+                                            <option value="">Seleccionar carrera...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="docenteNombre" class="form-label">Nombre del Docente *</label>
+                                        <input type="text" class="form-control" id="docenteNombre" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="docenteEmail" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="docenteEmail">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Agregar Docente
+                            </button>
+                        </form>
+
+                        <hr>
+                        <h6>Docentes Registrados</h6>
+                        <div id="listaDocentes" class="mt-3">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña practicas -->
+            <div class="tab-pane fade" id="practicas" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Gestión de Prácticas</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="formPractica">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="practicaCarrera" class="form-label">Carrera *</label>
+                                        <select class="form-select" id="practicaCarrera" required>
+                                            <option value="">Seleccionar carrera...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="practicaAsignatura" class="form-label">Asignatura *</label>
+                                        <select class="form-select" id="practicaAsignatura" required disabled>
+                                            <option value="">Primero selecciona una carrera</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        <label for="practicaNumero" class="form-label">Número *</label>
+                                        <input type="number" class="form-control" id="practicaNumero" min="1" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="practicaNombre" class="form-label">Nombre de la Práctica *</label>
+                                        <input type="text" class="form-control" id="practicaNombre" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="practicaDescripcion" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="practicaDescripcion" rows="2"></textarea>
+                            </div>
+
+                            <!-- Materiales requeridos  -->
+                            <div class="mb-3">
+                                <label class="form-label">Materiales Requeridos</label>
+                                <div id="materialesPracticaContainer">
+                                    <div class="material-practica-row row mb-2">
+                                        <div class="col-md-6">
+                                            <select class="form-select material-practica-select" required>
+                                                <option value="">Seleccionar material...</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="number" class="form-control cantidad-requerida" placeholder="Cantidad" min="1" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-danger btn-sm w-100 quitar-material-practica" disabled>
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-secondary btn-sm" id="agregarMaterialPractica">
+                                    <i class="fas fa-plus"></i> Agregar Material
+                                </button>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Agregar Práctica
+                            </button>
+                        </form>
+
+                        <hr>
+                        <h6>Prácticas Registradas</h6>
+                        <div id="listaPracticas" class="mt-3">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pestaña materiales -->
+            <div class="tab-pane fade" id="materiales" role="tabpanel">
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Gestión de Materiales</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="formMaterial">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label for="materialNombre" class="form-label">Nombre del Material *</label>
+                                        <input type="text" class="form-control" id="materialNombre" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="materialCategoria" class="form-label">Categoría</label>
+                                        <input type="text" class="form-control" id="materialCategoria">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-3">
+                                        <label for="materialCantidad" class="form-label">Cantidad Inicial *</label>
+                                        <input type="number" class="form-control" id="materialCantidad" min="0" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        <label for="materialUnidad" class="form-label">Unidad</label>
+                                        <input type="text" class="form-control" id="materialUnidad" value="pz" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="materialDescripcion" class="form-label">Descripción</label>
+                                <textarea class="form-control" id="materialDescripcion" rows="2"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus"></i> Agregar Material
+                            </button>
+                        </form>
+
+                        <hr>
+                        <h6>Materiales Registrados</h6>
+                        <div id="listaMateriales" class="mt-3">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/gestion_academica.js') }}"></script>
+{% endblock %}

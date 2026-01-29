@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes Avanzados - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-chart-line"></i> Reportes Avanzados</h2>
+        <p class="text-muted">Reportes consolidados y estadísticas del laboratorio</p>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-filter"></i> Filtros</h5>
+    </div>
+    <div class="card-body">
+        <form method="GET" class="row g-3">
+            <div class="col-md-3">
+                <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
+                <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio }}">
+            </div>
+            <div class="col-md-3">
+                <label for="fecha_fin" class="form-label">Fecha Fin</label>
+                <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin }}">
+            </div>
+            <div class="col-md-4">
+                <label for="carrera_id" class="form-label">Carrera</label>
+                <select class="form-select" id="carrera_id" name="carrera_id">
+                    <option value="">Todas las carreras</option>
+                    {% for carrera in carreras %}
+                    <option value="{{ carrera.id }}" {% if carrera_id == carrera.id|string %}selected{% endif %}>
+                        {{ carrera.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Resumen -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-info">
+            <div class="card-body text-center">
+                <h3>{{ total_asignaturas }}</h3>
+                <p class="mb-0">Asignaturas Atendidas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body text-center">
+                <h3>{{ estudiantes_por_asignatura|sum(attribute='num_estudiantes') }}</h3>
+                <p class="mb-0">Total Estudiantes Atendidos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body text-center">
+                <h3>{{ prestamos_con_observaciones|length }}</h3>
+                <p class="mb-0">Préstamos con Observaciones</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Estudiantes por asig -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-users"></i> Estudiantes Atendidos por Asignatura</h5>
+    </div>
+    <div class="card-body">
+        {% if estudiantes_por_asignatura %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Asignatura</th>
+                        <th>Estudiantes Atendidos</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in estudiantes_por_asignatura %}
+                    <tr>
+                        <td>{{ item.asignatura }}</td>
+                        <td>
+                            <span class="badge bg-primary">{{ item.num_estudiantes }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center">No hay datos para mostrar</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Uso materiales -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-tools"></i> Concentrado de Uso de Materiales</h5>
+    </div>
+    <div class="card-body">
+        {% if uso_materiales %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Material</th>
+                        <th>Veces Utilizado</th>
+                        <th>Total Unidades</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for material in uso_materiales %}
+                    <tr>
+                        <td>{{ material.nombre }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ material.veces_utilizado }}</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-success">{{ material.total_unidades }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center">No hay datos para mostrar</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Prestamos con observaciones -->
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="fas fa-exclamation-circle"></i> Préstamos con Observaciones</h5>
+        <div>
+            <a href="{{ url_for('detalle_observaciones', importancia='urgente') }}?fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" 
+               class="btn btn-sm btn-danger me-2">
+                <i class="fas fa-fire"></i> Ver Urgentes
+            </a>
+            <a href="{{ url_for('detalle_observaciones', importancia='normal') }}?fecha_inicio={{ fecha_inicio }}&fecha_fin={{ fecha_fin }}" 
+               class="btn btn-sm btn-warning">
+                <i class="fas fa-info-circle"></i> Ver Normales
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if prestamos_con_observaciones %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Carrera</th>
+                        <th>Asignatura</th>
+                        <th>Práctica</th>
+                        <th>Observaciones</th>
+                        <th>Importancia</th>
+                        <th>Materiales</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prestamo in prestamos_con_observaciones %}
+                    <tr>
+                        <td>{{ prestamo.fecha_hora.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ prestamo.carrera }}</td>
+                        <td>{{ prestamo.asignatura }}</td>
+                        <td>{{ prestamo.practica }}</td>
+                        <td>
+                            <span class="d-inline-block text-truncate" style="max-width: 200px;" 
+                                  title="{{ prestamo.observaciones }}">
+                                {{ prestamo.observaciones }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ 'danger' if prestamo.importancia_observacion == 'urgente' else 'warning' }}">
+                                {{ prestamo.importancia_observacion|title }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-secondary">{{ prestamo.num_materiales }}</span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('ver_ticket', prestamo_id=prestamo.id) }}" 
+                               class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="fas fa-eye"></i> Ver Ticket
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center">No hay préstamos con observaciones</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Eliminacion de prestamos -->
+{% if session.tipo == 'administrador' %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="fas fa-trash-alt"></i> Eliminación de Préstamos por Periodo</h5>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <strong>Advertencia:</strong> Esta acción eliminará lógicamente todos los préstamos dentro del periodo seleccionado. 
+            Los datos no se podrán recuperar.
+        </div>
+        <form id="formEliminarPrestamos" class="row g-3">
+            <div class="col-md-4">
+                <label for="eliminar_fecha_inicio" class="form-label">Fecha Inicio *</label>
+                <input type="date" class="form-control" id="eliminar_fecha_inicio" required>
+            </div>
+            <div class="col-md-4">
+                <label for="eliminar_fecha_fin" class="form-label">Fecha Fin *</label>
+                <input type="date" class="form-control" id="eliminar_fecha_fin" required>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-danger w-100">
+                    <i class="fas fa-trash-alt"></i> Eliminar Préstamos
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const formEliminar = document.getElementById('formEliminarPrestamos');
+    if (formEliminar) {
+        formEliminar.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fechaInicio = document.getElementById('eliminar_fecha_inicio').value;
+            const fechaFin = document.getElementById('eliminar_fecha_fin').value;
+            
+            if (!fechaInicio || !fechaFin) {
+                alert('Ambas fechas son requeridas');
+                return;
+            }
+            
+            if (!confirm('¿Está seguro de que desea eliminar todos los préstamos en este periodo? Esta acción no se puede deshacer.')) {
+                return;
+            }
+            
+            const button = e.target.querySelector('button[type="submit"]');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Eliminando...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch('/admin/eliminar-prestamos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        fecha_inicio: fechaInicio,
+                        fecha_fin: fechaFin
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message);
+                    formEliminar.reset();
+                    location.reload(); 
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error al eliminar préstamos');
+            } finally {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

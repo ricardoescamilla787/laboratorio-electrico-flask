@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Préstamo - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-plus-circle"></i> Nuevo Préstamo de Material</h2>
+        <p class="text-muted">Complete el formulario para solicitar materiales del laboratorio</p>
+    </div>
+</div>
+
+<form id="prestamoForm">
+    <!-- Encabezado -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white text-center">
+            <h5 class="mb-0">INSTITUTO TECNOLÓGICO DE PACHUCA<br>
+            <small>DEPARTAMENTO DE INGENIERÍA ELÉCTRICA Y ELECTRÓNICA<br>
+            LABORATORIO DE ELÉCTRICA</small><br>
+            <small class="fw-normal">Solicitud para préstamo de material, equipo o herramienta</small></h5>
+        </div>
+    </div>
+
+    <!-- Informacion academica -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-graduation-cap"></i> Información Académica</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="carrera" class="form-label">Carrera *</label>
+                        <select class="form-select" id="carrera" name="carrera_id" required>
+                            <option value="">Seleccionar carrera...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="asignatura" class="form-label">Asignatura *</label>
+                        <select class="form-select" id="asignatura" name="asignatura_id" required disabled>
+                            <option value="">Primero selecciona una carrera</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="docente" class="form-label">Docente *</label>
+                        <select class="form-select" id="docente" name="docente_id" required disabled>
+                            <option value="">Primero selecciona una carrera</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="fecha_hora" class="form-label">Fecha/Hora del Préstamo *</label>
+                        <input type="datetime-local" class="form-control" id="fecha_hora" name="fecha_hora" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Informacion de la practica -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-flask"></i> Información de la Práctica</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="practica" class="form-label">Práctica *</label>
+                        <select class="form-select" id="practica" name="practica_id" required disabled>
+                            <option value="">Primero selecciona una asignatura</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="lugar_uso" class="form-label">Lugar donde se utilizará *</label>
+                        <input type="text" class="form-control" id="lugar_uso" name="lugar_uso" required>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones" 
+                        rows="3" required
+                        placeholder="Describa el estado de los materiales (quemados, en buen estado, etc.)"></textarea>
+                         <div class="alert alert-info">Este campo es obligatorio</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3">
+                        <label for="importancia_observacion" class="form-label">Importancia de Observación</label>
+                        <select class="form-select" id="importancia_observacion" name="importancia_observacion">
+                            <option value="normal">Normal</option>
+                            <option value="urgente">Urgente</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Materiales solicitados -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-tools"></i> Materiales Solicitados</h5>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Los materiales se cargarán automáticamente cuando selecciones una práctica.
+            </div>
+            <div id="materiales-container">
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Integrantes del equipo y firmas -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-users"></i> Integrantes del Equipo</h5>
+        </div>
+        <div class="card-body">
+            <div id="integrantes-container">
+                <div class="integrante-row row mb-4">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre completo *</label>
+                            <input type="text" class="form-control integrante-nombre" placeholder="Nombre completo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Número de control</label>
+                            <input type="text" class="form-control integrante-control" placeholder="Número de control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Firma digital *</label>
+                            <div class="firma-container border rounded p-3 bg-light">
+                                <canvas class="firma-canvas" width="400" height="150" style="border: 1px solid #ccc; background: white; cursor: crosshair;"></canvas>
+                                <div class="mt-2">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary btn-limpiar-firma">
+                                        <i class="fas fa-eraser"></i> Limpiar
+                                    </button>
+                                    <small class="text-muted ms-2">Firme en el área arriba</small>
+                                </div>
+                                <input type="hidden" class="firma-data">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <button type="button" class="btn btn-danger btn-sm quitar-integrante" disabled>
+                            <i class="fas fa-times"></i> Quitar Integrante
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-secondary mt-2" id="agregar-integrante">
+                <i class="fas fa-plus"></i> Agregar integrante
+            </button>
+        </div>
+    </div>
+    
+    <!-- Botones -->
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button type="button" class="btn btn-secondary me-md-2" onclick="previsualizar()">
+            <i class="fas fa-eye"></i> Previsualizar
+        </button>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Guardar Préstamo
+        </button>
+    </div>
+</form>
+
+<!-- Previsualizacion -->
+<div class="modal fade" id="previewModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Previsualización del Préstamo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="preview-content">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="imprimirPreview()">Imprimir</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- firma_digital.js -->
+<script src="{{ url_for('static', filename='js/firma_digital.js') }}"></script>
+<script src="{{ url_for('static', filename='js/nuevo_prestamo.js') }}"></script>
+{% endblock %}

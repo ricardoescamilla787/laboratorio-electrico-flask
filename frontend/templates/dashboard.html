@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2><i class="fas fa-tachometer-alt"></i> Dashboard Principal</h2>
+        <p class="text-muted">Bienvenido al sistema de gestión de préstamos del laboratorio</p>
+    </div>
+</div>
+
+<!-- Estadisticas -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ total_prestamos }}</h4>
+                        <p class="mb-0">Total Préstamos</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clipboard-list fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ materiales_disponibles }}</h4>
+                        <p class="mb-0">Materiales Disponibles</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-tools fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ prestamos_hoy }}</h4>
+                        <p class="mb-0">Préstamos Hoy</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar-day fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h4>{{ session.tipo|title }}</h4>
+                        <p class="mb-0">Tu Rol</p>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-user-tag fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones rapidas -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-rocket"></i> Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4 mb-3">
+                        <a href="{{ url_for('nuevo_prestamo') }}" class="btn btn-primary btn-lg w-100 py-3">
+                            <i class="fas fa-plus-circle fa-2x mb-2 d-block"></i>
+                            Nuevo Préstamo
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <a href="{{ url_for('reportes') }}" class="btn btn-outline-primary btn-lg w-100 py-3">
+                            <i class="fas fa-chart-bar fa-2x mb-2 d-block"></i>
+                            Ver Reportes
+                        </a>
+                    </div>
+                    {% if session.tipo == 'administrador' %}
+                    <div class="col-md-4 mb-3">
+                        <a href="{{ url_for('gestion_academica') }}" class="btn btn-success btn-lg w-100 py-3">
+                            <i class="fas fa-cogs fa-2x mb-2 d-block"></i>
+                            Gestión Académica
+                        </a>
+                    </div>
+                    {% else %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <i class="fas fa-user-graduate fa-2x text-muted mb-2 d-block"></i>
+                                <small class="text-muted">Modo Estudiante</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ultimos prestamos -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-history"></i> Últimos Préstamos Registrados</h5>
+                <a href="{{ url_for('reportes') }}" class="btn btn-sm btn-outline-primary">Ver Todos</a>
+            </div>
+            <div class="card-body">
+                {% if ultimos_prestamos and ultimos_prestamos|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Fecha/Hora</th>
+                                <th>Carrera</th>
+                                <th>Asignatura</th>
+                                <th>Práctica</th>
+                                <th>Docente</th>
+                                <th>Solicitante</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for prestamo in ultimos_prestamos %}
+                            <tr>
+                                <td>{{ prestamo.fecha_hora.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>{{ prestamo.carrera_nombre or 'N/A' }}</td>
+                                <td>{{ prestamo.asignatura_nombre or 'N/A' }}</td>
+                                <td>
+                                    {% if prestamo.practica_numero and prestamo.practica_nombre %}
+                                        #{{ prestamo.practica_numero }} - {{ prestamo.practica_nombre }}
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>{{ prestamo.docente_nombre or 'N/A' }}</td>
+                                <td>{{ prestamo.solicitante or 'N/A' }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'success' if prestamo.estado == 'devuelto' else 'primary' }}">
+                                        {{ prestamo.estado|title if prestamo.estado else 'Activo' }}
+                                    </span>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No hay préstamos registrados</h5>
+                    <p class="text-muted">Comienza registrando tu primer préstamo de materiales</p>
+                    <a href="{{ url_for('nuevo_prestamo') }}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle"></i> Realizar Primer Préstamo
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
