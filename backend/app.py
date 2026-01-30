@@ -10,11 +10,11 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.append(parent_dir)
 
 try:
-    from config import Config
-    from database.init_db import init_database
-    from database.db_connection import get_db_connection
+    from backend.config import Config
+    from backend.database.init_db import init_database
+    from backend.database.db_connection import get_db_connection
 except ImportError as e:
-    print(f" Error de importación: {e}")
+    print(f"Error de importación: {e}")
     sys.exit(1)
 
 app = Flask(__name__,
