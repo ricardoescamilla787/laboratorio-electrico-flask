@@ -1,17 +1,14 @@
 import os
 import sys
-import sqlite3
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import Config
 from database.db_connection import get_db_connection, get_db_connection_without_db
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "..", "database.db")
-
 def init_database():
     """Inicializar la base de datos y tablas"""
     try:
-        conn = sqlite3.connect("database.db")
+        conn = get_db_connection_without_db()
         if conn is None:
             print(" No se pudo conectar al servidor MySQL")
             return False
